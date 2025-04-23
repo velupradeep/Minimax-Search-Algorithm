@@ -73,6 +73,37 @@ def score(game)
     end
 end
 
+
+Simple enough, return +10 if the current player wins the game, -10 if the other player wins and 0 for a draw. You will note that who the player is doesn't matter. X or O is irrelevant, only who's turn it happens to be.
+
+And now the actual minimax algorithm; note that in this implementation a choice or move is simply a row / column address on the board, for example [0,2] is the top right square on a 3x3 board.
+
+def minimax(game)
+    return score(game) if game.over?
+    scores = [] # an array of scores
+    moves = []  # an array of moves
+
+    # Populate the scores array, recursing as needed
+    game.get_available_moves.each do |move|
+        possible_game = game.get_new_state(move)
+        scores.push minimax(possible_game)
+        moves.push move
+    end
+
+    # Do the min or the max calculation
+    if game.active_turn == @player
+        # This is the max calculation
+        max_score_index = scores.each_with_index.max[1]
+        @choice = moves[max_score_index]
+        return scores[max_score_index]
+    else
+        # This is the min calculation
+        min_score_index = scores.each_with_index.min[1]
+        @choice = moves[min_score_index]
+        return scores[min_score_index]
+    end
+end
+
 ## PROGRAM:
 ```
 import time
@@ -234,37 +265,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```
 
-Simple enough, return +10 if the current player wins the game, -10 if the other player wins and 0 for a draw. You will note that who the player is doesn't matter. X or O is irrelevant, only who's turn it happens to be.
-
-And now the actual minimax algorithm; note that in this implementation a choice or move is simply a row / column address on the board, for example [0,2] is the top right square on a 3x3 board.
-
-def minimax(game)
-    return score(game) if game.over?
-    scores = [] # an array of scores
-    moves = []  # an array of moves
-
-    # Populate the scores array, recursing as needed
-    game.get_available_moves.each do |move|
-        possible_game = game.get_new_state(move)
-        scores.push minimax(possible_game)
-        moves.push move
-    end
-
-    # Do the min or the max calculation
-    if game.active_turn == @player
-        # This is the max calculation
-        max_score_index = scores.each_with_index.max[1]
-        @choice = moves[max_score_index]
-        return scores[max_score_index]
-    else
-        # This is the min calculation
-        min_score_index = scores.each_with_index.min[1]
-        @choice = moves[min_score_index]
-        return scores[min_score_index]
-    end
-end
 
 <hr>
 <h2>Sample Input and Output</h2>
